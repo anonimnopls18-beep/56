@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>анна марія шлюха</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #1a1a1a, #333);
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    header {
+      text-align: center;
+      padding: 15px;
+      font-size: 2em;
+      font-weight: bold;
+      text-shadow: 0 0 8px rgba(255,255,255,0.6);
+    }
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    #clickable {
+      max-width: 90vw;
+      max-height: 70vh;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      user-select: none;
+    }
+    #clickable:active {
+      transform: scale(0.95);
+    }
+    #fallback {
+      width: 300px;
+      height: 300px;
+      background: #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      border-radius: 15px;
+    }
+    .drop {
+      position: absolute;
+      width: 18px;
+      height: 28px;
+      background: white;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.9;
+      pointer-events: none;
+      animation: floatUp 1s ease-out forwards;
+      box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-80px) scale(0.6); opacity: 0; }
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      background: #555;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 5px;
+    }
+    button:hover {
+      background: #777;
+    }
+
+    /* ==== МАГАЗИН ==== */
+    #shop {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100%;
+      background: #222;
+      box-shadow: -4px 0 10px rgba(0,0,0,0.5);
+      transition: right 0.3s ease;
+      padding: 15px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    #shop.open {
+      right: 0;
+    }
+    #shop h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+      text-align: center;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    .shop-item {
+      margin: 15px 0;
+      padding: 10px;
+      background: #333;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .shop-item img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .shop-item button {
+      background: #4caf50;
+    }
+    .shop-item button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    #shopToggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 20;
+      padding: 12px 18px;
+      background: #4caf50;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <header id="counter">0 сперма головка</header>
+  <main>
+    <img id="clickable" src="https://i.ibb.co/rfvdww6Y/image.jpg" alt="clickable" onerror="showFallback()">
+    <div id="fallback" style="display:none;">[Зображення недоступне]</div>
+  </main>
+  <footer>
+    <button onclick="resetCounter()">Reset</button>
+  </footer>
+
+  <!-- Кнопка магазину -->
+  <button id="shopToggle" onclick="toggleShop()">Магаз</button>
+
+  <!-- Магазин -->
+  <div id="shop">
+    <h2>Магазин</h2>
+    <div class="shop-item">
+      <img src="https://i.ibb.co/1f6HNvN3/image.png" alt="Битий">
+      <p>Битий — 100 сперми головка</p>
+      <button onclick="buyItem('bitiy','https://i.ibb.co/1f6HNvN3/image.png',100)" id="buy-bitiy">Купити</button>
+    </div>
+  </div>
+
+  <script>
+    // ==== НАЛАШТУВАННЯ ====
+    let IMAGE_URL = "https://i.ibb.co/rfvdww6Y/image.jpg";
+    let CURRENCY_NAME = "сперма головка";
+    let INCREMENT = 1;
+
+    // ==== ЛОГІКА ====
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("img")) IMAGE_URL = urlParams.get("img");
+    if (urlParams.get("name")) CURRENCY_NAME = urlParams.get("name");
+
+    const clickable = document.getElementById("clickable");
+    const counterEl = document.getElementById("counter");
+    let count = 0;
+
+    try {
+      count = parseInt(localStorage.getItem("clicker_count")) || 0;
+      const savedImage = localStorage.getItem("clicker_image");
+      if (savedImage) clickable.src = savedImage;
+    } catch (e) {
+      alert("localStorage недоступний, прогрес не буде збережено!");
+    }
+    updateCounter();
+
+    clickable.src = IMAGE_URL;
+    clickable.addEventListener("click", (e) => {
+      count += INCREMENT;
+      updateCounter();
+      save();
+      spawnDrop(e.clientX, e.clientY);
+    });
+
+    function updateCounter() {
+      counterEl.textContent = count + " " + CURRENCY_NAME;
+    }
+    function save() {
+      try {
+        localStorage.setItem("clicker_count", count);
+        localStorage.setItem("clicker_image", clickable.src);
+      } catch (e) {}
+    }
+    function resetCounter() {
+      count = 0;
+      updateCounter();
+      save();
+    }
+    function showFallback() {
+      document.getElementById("clickable").style.display = "none";
+      document.getElementById("fallback").style.display = "flex";
+    }
+    function spawnDrop(x, y) {
+      const drop = document.createElement("div");
+      drop.className = "drop";
+      drop.style.left = (x - 9) + "px";
+      drop.style.top = (y - 14) + "px";
+      document.body.appendChild(drop);
+      setTimeout(() => drop.remove(), 1000);
+    }
+
+    // ==== МАГАЗИН ====
+    function toggleShop() {
+      document.getElementById("shop").classList.toggle("open");
+    }
+    function buyItem(id, imgUrl, price) {
+      if (count >= price) {
+        count -= price;
+        clickable.src = imgUrl;
+        updateCounter();
+        save();
+        document.getElementById("buy-" + id).disabled = true;
+        alert("Ви купили " + битого + "!");
+      } else {
+        alert("Недостатньо валюти!");
+      }
+    }
+
+    window.addEventListener("beforeunload", save);
+  </script>
+</body>
+</html>
