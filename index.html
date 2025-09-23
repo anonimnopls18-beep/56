@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>анна марія шлюха</title>
+  <title>Клікер</title>
   <style>
     body {
       margin: 0;
       display: flex;
       flex-direction: column;
       height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a, #333);
-      color: white;
-      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a, #262626);
+      color: #fff;
+      font-family: "Segoe UI", Arial, sans-serif;
       overflow: hidden;
     }
     header {
@@ -20,7 +20,9 @@
       padding: 15px;
       font-size: 2em;
       font-weight: bold;
-      text-shadow: 0 0 8px rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.5);
+      border-bottom: 1px solid #444;
+      text-shadow: 0 0 10px rgba(255,255,255,0.7);
     }
     main {
       flex: 1;
@@ -30,11 +32,13 @@
       position: relative;
     }
     #clickable {
-      max-width: 90vw;
-      max-height: 70vh;
+      max-width: 80vw;
+      max-height: 65vh;
       cursor: pointer;
       transition: transform 0.1s ease;
       user-select: none;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
     #clickable:active {
       transform: scale(0.95);
@@ -67,124 +71,164 @@
     footer {
       text-align: center;
       padding: 10px;
+      background: rgba(0,0,0,0.4);
+      border-top: 1px solid #444;
     }
     button {
       padding: 10px 16px;
       border: none;
-      border-radius: 10px;
-      background: #555;
+      border-radius: 12px;
+      background: #4caf50;
       color: white;
       font-size: 1em;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.25s, transform 0.2s;
       margin: 5px;
     }
     button:hover {
-      background: #777;
+      background: #66d866;
+      transform: translateY(-2px);
     }
 
     /* ==== МАГАЗИН ==== */
     #shop {
       position: fixed;
       top: 0;
-      right: -300px;
-      width: 300px;
+      left: 0;
+      width: 100%;
       height: 100%;
-      background: #222;
-      box-shadow: -4px 0 10px rgba(0,0,0,0.5);
-      transition: right 0.3s ease;
-      padding: 15px;
-      overflow-y: auto;
-      z-index: 10;
+      background: rgba(15,15,15,0.97);
+      display: none;
+      flex-direction: column;
+      z-index: 20;
+      animation: fadeIn 0.3s ease;
     }
     #shop.open {
-      right: 0;
+      display: flex;
     }
-    #shop h2 {
-      margin-top: 0;
-      font-size: 1.5em;
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #shop header {
+      font-size: 1.8em;
+      padding: 15px;
+      border-bottom: 1px solid #333;
       text-align: center;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
+    }
+    #shopItems {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
     }
     .shop-item {
-      margin: 15px 0;
-      padding: 10px;
-      background: #333;
-      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 12px;
       text-align: center;
+      backdrop-filter: blur(6px);
+      transition: transform 0.25s;
+    }
+    .shop-item:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,0.1);
     }
     .shop-item img {
       max-width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-bottom: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
+    .shop-item p {
+      margin: 5px 0;
     }
     .shop-item button {
-      background: #4caf50;
+      width: 100%;
+      margin-top: 6px;
     }
-    .shop-item button:disabled {
-      background: #555;
-      cursor: not-allowed;
+    #closeShop {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #e53935;
     }
+
+    /* ==== КНОПКА ІКОНИ ==== */
     #shopToggle {
       position: fixed;
       top: 15px;
-      right: 15px;
-      z-index: 20;
-      padding: 12px 18px;
-      background: #4caf50;
-      font-size: 1.1em;
+      left: 15px;
+      z-index: 30;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 1.4em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #shopToggle:hover {
+      background: rgba(0,0,0,0.8);
     }
   </style>
 </head>
 <body>
-  <header id="counter">0 сперма головка</header>
+  <header id="counter">0 монет</header>
   <main>
     <img id="clickable" src="https://i.ibb.co/rfvdww6Y/image.jpg" alt="clickable" onerror="showFallback()">
     <div id="fallback" style="display:none;">[Зображення недоступне]</div>
   </main>
   <footer>
-    <button onclick="resetCounter()">Reset</button>
+    <button onclick="resetCounter()">Скинути</button>
   </footer>
 
-  <!-- Кнопка магазину -->
-  <button id="shopToggle" onclick="toggleShop()">Магаз</button>
+  <!-- Кнопка іконка -->
+  <div id="shopToggle" onclick="toggleShop()">🛒</div>
 
   <!-- Магазин -->
   <div id="shop">
-    <h2>Магазин</h2>
-    <div class="shop-item">
-      <img src="https://i.ibb.co/1f6HNvN3/image.png" alt="Битий">
-      <p>Битий — 100 сперми головка</p>
-      <button onclick="buyItem('bitiy','https://i.ibb.co/1f6HNvN3/image.png',100)" id="buy-bitiy">Купити</button>
-    </div>
+    <header>Магазин</header>
+    <button id="closeShop" onclick="toggleShop()">✖</button>
+    <div id="shopItems"></div>
   </div>
 
   <script>
     // ==== НАЛАШТУВАННЯ ====
-    let IMAGE_URL = "https://i.ibb.co/rfvdww6Y/image.jpg";
-    let CURRENCY_NAME = "сперма головка";
-    let INCREMENT = 1;
+    let DEFAULT_IMAGE = "https://i.ibb.co/rfvdww6Y/image.jpg";
+    let CURRENCY_NAME = "сперми головка";
+
+    const items = [
+      {id: "default", name: "Стандартний", img: DEFAULT_IMAGE, price: 0, boost: 1},
+      {id: "bitiy", name: "Битий", img: "https://i.ibb.co/1f6HNvN3/image.png", price: 100, boost: 3},
+      {id: "boss", name: "Анна-Марія", img: "https://i.ibb.co/BHV8QCF6/1.jpg", price: 300, boost: 5},
+      {id: "king", name: "Вероніка", img: "https://i.ibb.co/G3T8zx2H/image.jpg", price: 500, boost: 10}
+    ];
 
     // ==== ЛОГІКА ====
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("img")) IMAGE_URL = urlParams.get("img");
-    if (urlParams.get("name")) CURRENCY_NAME = urlParams.get("name");
-
     const clickable = document.getElementById("clickable");
     const counterEl = document.getElementById("counter");
     let count = 0;
+    let ownedSkins = [];
+    let activeSkin = "default";
+    let INCREMENT = 1;
 
     try {
       count = parseInt(localStorage.getItem("clicker_count")) || 0;
-      const savedImage = localStorage.getItem("clicker_image");
-      if (savedImage) clickable.src = savedImage;
+      ownedSkins = JSON.parse(localStorage.getItem("owned_skins")) || ["default"];
+      activeSkin = localStorage.getItem("active_skin") || "default";
+      clickable.src = items.find(i => i.id === activeSkin)?.img || DEFAULT_IMAGE;
+      INCREMENT = items.find(i => i.id === activeSkin)?.boost || 1;
     } catch (e) {
-      alert("localStorage недоступний, прогрес не буде збережено!");
+      alert("localStorage недоступний!");
     }
     updateCounter();
 
-    clickable.src = IMAGE_URL;
     clickable.addEventListener("click", (e) => {
       count += INCREMENT;
       updateCounter();
@@ -198,7 +242,8 @@
     function save() {
       try {
         localStorage.setItem("clicker_count", count);
-        localStorage.setItem("clicker_image", clickable.src);
+        localStorage.setItem("owned_skins", JSON.stringify(ownedSkins));
+        localStorage.setItem("active_skin", activeSkin);
       } catch (e) {}
     }
     function resetCounter() {
@@ -207,7 +252,7 @@
       save();
     }
     function showFallback() {
-      document.getElementById("clickable").style.display = "none";
+      clickable.style.display = "none";
       document.getElementById("fallback").style.display = "flex";
     }
     function spawnDrop(x, y) {
@@ -222,18 +267,53 @@
     // ==== МАГАЗИН ====
     function toggleShop() {
       document.getElementById("shop").classList.toggle("open");
+      renderShop();
     }
-    function buyItem(id, imgUrl, price) {
+
+    function renderShop() {
+      const shopContainer = document.getElementById("shopItems");
+      shopContainer.innerHTML = "";
+      items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "shop-item";
+        const owned = ownedSkins.includes(item.id);
+        const isActive = activeSkin === item.id;
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <p><b>${item.name}</b></p>
+          <p>${item.price} ${CURRENCY_NAME}</p>
+          <p>+${item.boost} за клік</p>
+          ${
+            owned
+              ? `<button onclick="setActiveSkin('${item.id}')" ${isActive ? "disabled" : ""}>${isActive ? "Активно" : "Використати"}</button>`
+              : `<button onclick="buyItem('${item.id}','${item.img}',${item.price},'${item.name}')">Купити</button>`
+          }
+        `;
+        shopContainer.appendChild(div);
+      });
+    }
+
+    function buyItem(id, imgUrl, price, name) {
       if (count >= price) {
         count -= price;
-        clickable.src = imgUrl;
+        ownedSkins.push(id);
+        setActiveSkin(id);
         updateCounter();
         save();
-        document.getElementById("buy-" + id).disabled = true;
-        alert("Ви купили " + битого + "!");
+        renderShop();
+        alert("Ви купили: " + name + "!");
       } else {
         alert("Недостатньо валюти!");
       }
+    }
+
+    function setActiveSkin(id) {
+      activeSkin = id;
+      const item = items.find(i => i.id === id);
+      clickable.src = item?.img || DEFAULT_IMAGE;
+      INCREMENT = item?.boost || 1;
+      save();
+      renderShop();
     }
 
     window.addEventListener("beforeunload", save);
