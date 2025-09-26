@@ -1,322 +1,243 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Клікер</title>
-  <style>
-    body {
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: linear-gradient(135deg, #0f0f0f, #1a1a1a, #262626);
-      color: #fff;
-      font-family: "Segoe UI", Arial, sans-serif;
-      overflow: hidden;
-    }
-    header {
-      text-align: center;
-      padding: 15px;
-      font-size: 2em;
-      font-weight: bold;
-      background: rgba(0,0,0,0.5);
-      border-bottom: 1px solid #444;
-      text-shadow: 0 0 10px rgba(255,255,255,0.7);
-    }
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    #clickable {
-      max-width: 80vw;
-      max-height: 65vh;
-      cursor: pointer;
-      transition: transform 0.1s ease;
-      user-select: none;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
-    #clickable:active {
-      transform: scale(0.95);
-    }
-    #fallback {
-      width: 300px;
-      height: 300px;
-      background: #555;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5em;
-      border-radius: 15px;
-    }
-    .drop {
-      position: absolute;
-      width: 18px;
-      height: 28px;
-      background: white;
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      opacity: 0.9;
-      pointer-events: none;
-      animation: floatUp 1s ease-out forwards;
-      box-shadow: 0 0 6px rgba(255,255,255,0.8);
-    }
-    @keyframes floatUp {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-80px) scale(0.6); opacity: 0; }
-    }
-    footer {
-      text-align: center;
-      padding: 10px;
-      background: rgba(0,0,0,0.4);
-      border-top: 1px solid #444;
-    }
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 12px;
-      background: #4caf50;
-      color: white;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background 0.25s, transform 0.2s;
-      margin: 5px;
-    }
-    button:hover {
-      background: #66d866;
-      transform: translateY(-2px);
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Punch the Dude — мобільна версія</title>
+<style>
+:root{--bg:#0b1220;--card:#0f1724;--accent:#ff6b6b;--text:#e6eef8}
+html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg),#071026);color:var(--text)}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8px;box-sizing:border-box}
+.stage{width:100%;max-width:380px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));border-radius:14px;padding:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);position:relative}
+.title{font-weight:700;margin:0 0 6px 0;font-size:16px;text-align:center}
+.subtitle{font-size:12px;color:#9fb4d6;margin-bottom:10px;text-align:center}
 
-    /* ==== МАГАЗИН ==== */
-    #shop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15,15,15,0.97);
-      display: none;
-      flex-direction: column;
-      z-index: 20;
-      animation: fadeIn 0.3s ease;
-    }
-    #shop.open {
-      display: flex;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    #shop header {
-      font-size: 1.8em;
-      padding: 15px;
-      border-bottom: 1px solid #333;
-      text-align: center;
-    }
-    #shopItems {
-      flex: 1;
-      overflow-y: auto;
-      padding: 15px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-    }
-    .shop-item {
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-      padding: 12px;
-      text-align: center;
-      backdrop-filter: blur(6px);
-      transition: transform 0.25s;
-    }
-    .shop-item:hover {
-      transform: translateY(-5px);
-      background: rgba(255,255,255,0.1);
-    }
-    .shop-item img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
-    }
-    .shop-item p {
-      margin: 5px 0;
-    }
-    .shop-item button {
-      width: 100%;
-      margin-top: 6px;
-    }
-    #closeShop {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: #e53935;
-    }
+.arena{display:flex;align-items:center;justify-content:center;padding:4px;background:rgba(255,255,255,0.02);border-radius:8px;position:relative;}
+svg{width:100%;height:auto;display:block;max-width:260px;}
+.part{cursor:pointer;transition:transform .25s ease, filter .25s ease}
+.part:hover{transform:scale(1.05)}
 
-    /* ==== КНОПКА ІКОНИ ==== */
-    #shopToggle {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 30;
-      background: rgba(0,0,0,0.6);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 1.4em;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    #shopToggle:hover {
-      background: rgba(0,0,0,0.8);
-    }
-  </style>
+.hit-anim{animation:hit-bounce .5s cubic-bezier(.68,-0.55,.27,1.55)}
+@keyframes hit-bounce{0%{transform:scale(1) translateY(0)}40%{transform:scale(1.2) translateY(-15px)}70%{transform:scale(.95) translateY(5px)}100%{transform:scale(1) translateY(0)}}
+
+.hit-flash{animation:flash .4s ease-out}
+@keyframes flash{0%{filter:brightness(2)}100%{filter:brightness(1)}}
+
+.floating{position:absolute;left:50%;transform:translateX(-50%);top:8px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);font-weight:600;transition:opacity .3s, transform .3s;pointer-events:none;white-space:nowrap;opacity:0;font-size:12px}
+.floating.show{opacity:1;transform:translate(-50%,-14px)}
+
+.popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.98);background:var(--card);padding:12px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.6);min-width:240px;max-width:90vw;display:none;z-index:60;text-align:center}
+.popup.show{display:block;animation:pop .25s ease-out}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(0.8);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.popup h3{margin:0 0 6px 0;font-size:15px}
+.popup p{margin:0 0 10px 0;color:#bcd3ee}
+.btn{display:inline-block;padding:6px 10px;border-radius:8px;background:linear-gradient(90deg,#1f2937,#0f1724);color:var(--text);cursor:pointer;border:1px solid rgba(255,255,255,0.03);font-size:13px}
+
+.footer{margin-top:10px;font-size:12px;color:#9fb4d6;display:flex;justify-content:space-between;align-items:center}
+.stats{font-weight:700;font-size:13px}
+
+/* Нокаут анімація */
+.knockout{
+  position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(255,255,255,0.9);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;font-weight:900;color:#ff3b3b;
+  animation:flashScreen .8s ease-out;
+  z-index:100;
+}
+@keyframes flashScreen{
+  0%{opacity:0}
+  20%{opacity:1}
+  80%{opacity:1}
+  100%{opacity:0}
+}
+
+/* бонусне повідомлення */
+.sideMessage{
+  position:fixed;cursor:pointer;z-index:90;
+  background:linear-gradient(120deg,#ff6b6b,#ffdd59);
+  padding:8px 12px;border-radius:12px;color:#000;font-weight:700;font-size:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  opacity:0;transform:scale(0.8);transition:0.4s;
+}
+.sideMessage.show{opacity:1;transform:scale(1);}
+@media(max-width:480px){
+  .sideMessage{font-size:11px;padding:6px 10px;}
+}
+</style>
 </head>
 <body>
-  <header id="counter">0 монет</header>
-  <main>
-    <img id="clickable" src="https://i.ibb.co/rfvdww6Y/image.jpg" alt="clickable" onerror="showFallback()">
-    <div id="fallback" style="display:none;">[Зображення недоступне]</div>
-  </main>
-  <footer>
-    <button onclick="resetCounter()">Скинути</button>
-  </footer>
+<div class="wrap">
+  <div class="stage">
+    <div class="title">ЛУПЦЮВАННЯ АННИ МАРІЇ</div>
+    <div class="subtitle">ВСІ УДАРИ ЯКІ НАНЕСУТЬ КОРИСТУВАЧІ БУДУТЬ ВИКОНУВАТИСЬ В РЕАЛЬНОМУ ЖИТТІ НА РЕАЛЬНІЙ АННІ МАРІЇ.</div>
 
-  <!-- Кнопка іконка -->
-  <div id="shopToggle" onclick="toggleShop()">🛒</div>
+    <div class="arena" id="arena">
+      <svg id="man" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60 36 q20 -40 40 0 q20 -40 40 0 q-10 32 -40 38 q-30 -6 -40 -38 z" fill="#3c2f2f" stroke="#1a1a1a" stroke-width="2" />
+        <circle id="head" class="part" cx="100" cy="60" r="28" fill="#ffd7bd" stroke="#caa089" stroke-width="2" />
+        <circle cx="90" cy="55" r="4" fill="#000"/>
+        <circle cx="110" cy="55" r="4" fill="#000"/>
+        <path d="M90 70 q10 12 20 0" stroke="#900" stroke-width="2" fill="transparent" stroke-linecap="round"/>
+        <rect x="92" y="88" width="16" height="8" rx="3" fill="#f0c9a8" />
+        <defs>
+          <pattern id="torsoImg" patternUnits="objectBoundingBox" width="1" height="1">
+            <image href="https://i.ibb.co/rfvdww6Y/image.jpg" preserveAspectRatio="xMidYMid slice" width="100" height="100" />
+          </pattern>
+        </defs>
+        <rect id="torso" class="part" x="66" y="96" width="68" height="96" rx="14" fill="url(#torsoImg)" stroke="#222" stroke-width="1" />
+        <rect id="leftArm" class="part" x="22" y="104" width="34" height="14" rx="8" transform="rotate(-20 22 104)" fill="#ffd7bd" />
+        <rect id="leftFore" class="part" x="12" y="124" width="26" height="48" rx="10" transform="rotate(8 12 124)" fill="#ffd7bd" />
+        <rect id="rightArm" class="part" x="144" y="104" width="34" height="14" rx="8" transform="rotate(20 144 104)" fill="#ffd7bd" />
+        <rect id="rightFore" class="part" x="162" y="124" width="26" height="48" rx="10" transform="rotate(-8 162 124)" fill="#ffd7bd" />
+        <rect x="78" y="192" width="44" height="18" rx="8" fill="#1f2937" />
+        <rect id="leftLeg" class="part" x="78" y="210" width="18" height="80" rx="10" fill="#111827" />
+        <rect id="rightLeg" class="part" x="104" y="210" width="18" height="80" rx="10" fill="#111827" />
+        <text id="nameText" x="100" y="320" font-size="12" text-anchor="middle" fill="#dbeafe">Анна Марія</text>
+      </svg>
+    </div>
 
-  <!-- Магазин -->
-  <div id="shop">
-    <header>Магазин</header>
-    <button id="closeShop" onclick="toggleShop()">✖</button>
-    <div id="shopItems"></div>
+    <div class="floating" id="floating">ВСІ УДАРИ ЯКІ НАНЕСУТЬ КОРИСТУВАЧІ БУДУТЬ ВИКОНУВАТИСЬ В РЕАЛЬНОМУ ЖИТТІ НА РЕАЛЬНІЙ АННІ МАРІЇ</div>
+
+    <div class="footer">
+      <div class="stats">Удари: <span id="totalHits">0</span></div>
+      <div class="stats">Нокаути: <span id="knockouts">0</span></div>
+    </div>
   </div>
+</div>
 
-  <script>
-    // ==== НАЛАШТУВАННЯ ====
-    let DEFAULT_IMAGE = "https://i.ibb.co/rfvdww6Y/image.jpg";
-    let CURRENCY_NAME = "сперми головка";
+<div class="popup" id="popup">
+  <h3 id="popupTitle">Вдарили!</h3>
+  <p id="popupText">Текст</p>
+  <div style="text-align:right"><div class="btn" id="closeBtn">Ок</div></div>
+</div>
 
-    const items = [
-      {id: "default", name: "Стандартний", img: DEFAULT_IMAGE, price: 0, boost: 1},
-      {id: "bitiy", name: "Битий", img: "https://i.ibb.co/1f6HNvN3/image.png", price: 100, boost: 3},
-      {id: "boss", name: "Анна-Марія", img: "https://i.ibb.co/BHV8QCF6/1.jpg", price: 300, boost: 5},
-      {id: "king", name: "Вероніка", img: "https://i.ibb.co/G3T8zx2H/image.jpg", price: 500, boost: 10}
-    ];
+<div class="sideMessage" id="sideMsg">Вдарити Анну Марію в сонячне сплетіння!</div>
 
-    // ==== ЛОГІКА ====
-    const clickable = document.getElementById("clickable");
-    const counterEl = document.getElementById("counter");
-    let count = 0;
-    let ownedSkins = [];
-    let activeSkin = "default";
-    let INCREMENT = 1;
+<script>
+const parts = {
+  head: 'в голову і стала ще тупіша 💥',
+  torso: 'у груди (ліва цицька)💢',
+  leftArm: 'по лівій руці 👊',
+  leftFore: 'по лівій кисті ✋',
+  rightArm: 'по правій руці 👊',
+  rightFore: 'по правій кисті ✋',
+  leftLeg: 'по лівій нозі, впала і розбила челюсть 🦵',
+  rightLeg: 'по правій нозі 🦵'
+};
 
-    try {
-      count = parseInt(localStorage.getItem("clicker_count")) || 0;
-      ownedSkins = JSON.parse(localStorage.getItem("owned_skins")) || ["default"];
-      activeSkin = localStorage.getItem("active_skin") || "default";
-      clickable.src = items.find(i => i.id === activeSkin)?.img || DEFAULT_IMAGE;
-      INCREMENT = items.find(i => i.id === activeSkin)?.boost || 1;
-    } catch (e) {
-      alert("localStorage недоступний!");
-    }
-    updateCounter();
+const floating = document.getElementById('floating');
+const popup = document.getElementById('popup');
+const popupTitle = document.getElementById('popupTitle');
+const popupText = document.getElementById('popupText');
+const closeBtn = document.getElementById('closeBtn');
+const totalHitsEl = document.getElementById('totalHits');
+const knockoutsEl = document.getElementById('knockouts');
+const sideMsg = document.getElementById('sideMsg');
+const arena = document.getElementById('arena');
 
-    clickable.addEventListener("click", (e) => {
-      count += INCREMENT;
-      updateCounter();
-      save();
-      spawnDrop(e.clientX, e.clientY);
-    });
+let totalHits = parseInt(localStorage.getItem('totalHits')) || 0;
+let knockouts = parseInt(localStorage.getItem('knockouts')) || 0;
+totalHitsEl.textContent = totalHits;
+knockoutsEl.textContent = knockouts;
+const targetName = 'Анна Марія';
+let canHit=true;
 
-    function updateCounter() {
-      counterEl.textContent = count + " " + CURRENCY_NAME;
-    }
-    function save() {
-      try {
-        localStorage.setItem("clicker_count", count);
-        localStorage.setItem("owned_skins", JSON.stringify(ownedSkins));
-        localStorage.setItem("active_skin", activeSkin);
-      } catch (e) {}
-    }
-    function resetCounter() {
-      count = 0;
-      updateCounter();
-      save();
-    }
-    function showFallback() {
-      clickable.style.display = "none";
-      document.getElementById("fallback").style.display = "flex";
-    }
-    function spawnDrop(x, y) {
-      const drop = document.createElement("div");
-      drop.className = "drop";
-      drop.style.left = (x - 9) + "px";
-      drop.style.top = (y - 14) + "px";
-      document.body.appendChild(drop);
-      setTimeout(() => drop.remove(), 1000);
-    }
+function playThud(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type='sine';o.frequency.value=60;
+    g.gain.value=0.001;
+    o.connect(g);g.connect(ctx.destination);
+    g.gain.exponentialRampToValueAtTime(0.8,ctx.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);
+    o.start();o.stop(ctx.currentTime+0.52);
+  }catch(e){}
+}
 
-    // ==== МАГАЗИН ====
-    function toggleShop() {
-      document.getElementById("shop").classList.toggle("open");
-      renderShop();
-    }
+function showPopup(partId){
+  const when = parts[partId] || 'по тілу';
+  popupTitle.textContent = '💥 Сильний удар!';
+  popupText.textContent = `Ви вдарили ${targetName} ${when}.`;
+  popup.classList.add('show');
+  canHit=false;
+}
+function hidePopup(){
+  popup.classList.remove('show');
+  canHit=true;
+}
 
-    function renderShop() {
-      const shopContainer = document.getElementById("shopItems");
-      shopContainer.innerHTML = "";
-      items.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "shop-item";
-        const owned = ownedSkins.includes(item.id);
-        const isActive = activeSkin === item.id;
-        div.innerHTML = `
-          <img src="${item.img}" alt="${item.name}">
-          <p><b>${item.name}</b></p>
-          <p>${item.price} ${CURRENCY_NAME}</p>
-          <p>+${item.boost} за клік</p>
-          ${
-            owned
-              ? `<button onclick="setActiveSkin('${item.id}')" ${isActive ? "disabled" : ""}>${isActive ? "Активно" : "Використати"}</button>`
-              : `<button onclick="buyItem('${item.id}','${item.img}',${item.price},'${item.name}')">Купити</button>`
-          }
-        `;
-        shopContainer.appendChild(div);
-      });
-    }
+function showFloating(text){
+  floating.textContent = text;
+  floating.classList.add('show');
+  setTimeout(()=>floating.classList.remove('show'),1400);
+}
 
-    function buyItem(id, imgUrl, price, name) {
-      if (count >= price) {
-        count -= price;
-        ownedSkins.push(id);
-        setActiveSkin(id);
-        updateCounter();
-        save();
-        renderShop();
-        alert("Ви купили: " + name + "!");
-      } else {
-        alert("Недостатньо валюти!");
-      }
-    }
+function showKnockout(){
+  const koDiv = document.createElement('div');
+  koDiv.className='knockout';
+  koDiv.textContent='💥 НОКАУТ! 💥';
+  document.body.appendChild(koDiv);
+  setTimeout(()=>koDiv.remove(),800);
+}
 
-    function setActiveSkin(id) {
-      activeSkin = id;
-      const item = items.find(i => i.id === id);
-      clickable.src = item?.img || DEFAULT_IMAGE;
-      INCREMENT = item?.boost || 1;
-      save();
-      renderShop();
-    }
+function onPartClick(e){
+  if(!canHit) return;
+  const id = e.target.id;
+  if(!id || !parts[id]) return;
+  totalHits++;
+  localStorage.setItem('totalHits', totalHits);
+  totalHitsEl.textContent = totalHits;
+  e.target.classList.add('hit-anim','hit-flash');
+  setTimeout(()=>e.target.classList.remove('hit-anim','hit-flash'),600);
+  playThud();
+  const when = parts[id];
+  showFloating(`⚡ ${targetName} отримала удар ${when}!`);
+  setTimeout(()=>showPopup(id),320);
 
-    window.addEventListener("beforeunload", save);
-  </script>
+  if(totalHits % 100 === 0){
+    knockouts++;
+    localStorage.setItem('knockouts', knockouts);
+    knockoutsEl.textContent = knockouts;
+    showKnockout();
+  }
+}
+
+Object.keys(parts).forEach(pid=>{
+  const el=document.getElementById(pid);
+  if(el) el.addEventListener('pointerdown', onPartClick);
+});
+
+closeBtn.addEventListener('click', hidePopup);
+popup.addEventListener('pointerdown', e=>{if(e.target===popup) hidePopup();});
+
+// бонусне повідомлення в будь-якій частині екрану
+function showRandomSideMsg(){
+  const x = Math.random()*80; // %
+  const y = 20 + Math.random()*50;
+  sideMsg.style.left = x+'%';
+  sideMsg.style.top = y+'%';
+  sideMsg.classList.add('show');
+  setTimeout(()=>sideMsg.classList.remove('show'),8000);
+  const next = 20000 + Math.random()*10000;
+  setTimeout(showRandomSideMsg,next);
+}
+setTimeout(showRandomSideMsg,15000);
+
+sideMsg.addEventListener('click', ()=>{
+  totalHits+=100;
+  knockouts+=1;
+  localStorage.setItem('totalHits', totalHits);
+  localStorage.setItem('knockouts', knockouts);
+  totalHitsEl.textContent=totalHits;
+  knockoutsEl.textContent=knockouts;
+  showKnockout();
+  showFloating(`💥 БОНУС! 100 ударів + 1 нокаут!`);
+  sideMsg.classList.remove('show');
+});
+</script>
 </body>
 </html>
